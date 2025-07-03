@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import useAuthStore from "../store/authStore";
+import log from "../../utils/logger.js";
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function SignupScreen() {
 
   const handleSubmit = async () => {
     const data = { username, email, password };
-    console.log(data);
+    log.info("signup screen data ", data);
     await signup(data);
     const user = useAuthStore.getState().user;
     if (user) router.replace("/home");

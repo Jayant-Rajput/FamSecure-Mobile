@@ -4,6 +4,7 @@ import axios from "axios";
 import { saveToken, getToken, removeToken } from '../../utils/secureStore';
 import { API } from "../../utils/api.js";
 import useSocketStore from "./socketStore";
+import log from "../../utils/logger.js";
 
 
 const useAuthStore = create((set) => ({
@@ -13,14 +14,14 @@ const useAuthStore = create((set) => ({
 
     signup: async (data) => {
         set({ isSigningIn: true });
-        console.log("signin called with ", data);
+        log.info("signin called with ", data);
         try{
-            const res = await axios.post(`http://${API}:3000/api/auth/register`, data);
+            const res = await axios.post(`https://famsecure.onrender.com/api/auth/register`, data);
             console.log("signin Response: ", res.data);
             set({ user: res.data.user });
             useSocketStore.getState().connectSocket(res.data.user.id);
         } catch(error){
-            console.log(error.response?.data || error);
+            log.error(error.response?.data || error);
             Alert.alert(error.response.data.message);
         } finally{
             set({ isSigningIn: false });
@@ -29,17 +30,17 @@ const useAuthStore = create((set) => ({
 
 
     login: async (data) => {
-        console.log("Login called with: ", data);
+        log.info("Login called with: ", data);
         set({ isLoggingIn: true});
         try{
-            const res = await axios.post(`http://${API}:3000/api/auth/login`, data);
+            const res = await axios.post(`https://famsecure.onrender.com/api/auth/login`, data);
             console.log("Login Response: ", res.data);
             await saveToken(res.data.token);
             set({ user: res.data });
             useSocketStore.getState().connectSocket(res.data.user.id);
 
         } catch(error){
-            console.log(error.response?.data || error);
+            log.error(error.response?.data || error);
         } finally{
             set({ isLoggingIn: false });
         }
@@ -54,11 +55,12 @@ const useAuthStore = create((set) => ({
 
 
     fetchUserFromToken: async () => {
+        log.info("fetchUserFromToken called");
         const token = await getToken();
         if(!token) return;
 
         try{
-            const res = await axios.get(`http://${API}:3000/api/auth/me`, {
+            const res = await axios.get(`https://famsecure.onrender.com/api/auth/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             console.log("fetchUserFromToken response: ", res.data);
@@ -66,7 +68,7 @@ const useAuthStore = create((set) => ({
             useSocketStore.getState().connectSocket(res.data.user.id);  
 
         } catch(error){
-            console.log("Invalid token", error);
+            log.error("Invalid token", error);
             await removeToken();
             set({ user: null });
         }

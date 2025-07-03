@@ -10,6 +10,7 @@ export default function GroupScreen() {
   const { user } = useAuthStore();
 
   useEffect(() => {
+    console.log(user.id);
     if (user?.id) {
       const fetchGroups = async () => {
         await fetchUserGroups({ userId: user.id });

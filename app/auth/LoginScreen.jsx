@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import useAuthStore from "../store/authStore";
+import log from "../../utils/logger";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function LoginScreen() {
 
   const handleSubmit = async () => {
     const data = { email, password };
-
+    log.info("loginscreen data ", data);
     await login(data);
     const user = useAuthStore.getState().user;
 
