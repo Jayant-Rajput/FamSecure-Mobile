@@ -5,54 +5,54 @@ import * as Location from "expo-location";
 import useAuthStore from "../../store/authStore";
 import useGroupStore from "../../store/groupStore";
 import useSocketStore from "../../store/socketStore";
+import useLocationStore from "../../store/locationStore";
 
 export default function GroupMapScreen() {
   const { user } = useAuthStore();
   const { group } = useGroupStore();
   const { sendLocationToAllGroups, socket } = useSocketStore();
-
-  const [location, setLocation] = useState(null);
+  const location = useLocationStore((state) => state.location);
   const [members, setMembers] = useState([]);
 
-  useEffect(() => {
-    let locationWatcher;
+  // useEffect(() => {
+  //   let locationWatcher;
 
-    const startTracking = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      console.log("Location permission status:", status);
+  //   const startTracking = async () => {
+  //     const { status } = await Location.requestForegroundPermissionsAsync();
+  //     console.log("Location permission status:", status);
 
-      if (status !== "granted") {
-        alert("Permission denied for location.");
-        return;
-      }
+  //     if (status !== "granted") {
+  //       alert("Permission denied for location.");
+  //       return;
+  //     }
 
-      locationWatcher = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 5000,
-          distanceInterval: 10,
-        },
-        (loc) => {
-          const { latitude, longitude } = loc.coords;
-          console.log("Got location:", latitude, longitude);
-          setLocation({ lat: latitude, lon: longitude });
+  //     locationWatcher = await Location.watchPositionAsync(
+  //       {
+  //         accuracy: Location.Accuracy.High,
+  //         timeInterval: 5000,
+  //         distanceInterval: 10,
+  //       },
+  //       (loc) => {
+  //         const { latitude, longitude } = loc.coords;
+  //         console.log("Got location:", latitude, longitude);
+  //         setLocation({ lat: latitude, lon: longitude });
 
-          sendLocationToAllGroups(user.id, latitude, longitude, user.groups);   
-        }
-      );
-    };
+  //         sendLocationToAllGroups(user.id, latitude, longitude, user.groups);   
+  //       }
+  //     );
+  //   };
 
-    console.log("user: ", user);
-    console.log("group: ", group);
+  //   console.log("user: ", user);
+  //   console.log("group: ", group);
 
-    if (user?.id && group?.id) {
-      startTracking();
-    }
+  //   if (user?.id && group?.id) {
+  //     startTracking();
+  //   }
 
-    return () => {
-      if (locationWatcher) locationWatcher.remove();
-    };
-  }, [user, group]);
+  //   return () => {
+  //     if (locationWatcher) locationWatcher.remove();
+  //   };
+  // }, [user, group]);
 
   useEffect(() => {
     if (group?.members) {

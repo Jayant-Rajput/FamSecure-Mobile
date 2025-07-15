@@ -16,6 +16,8 @@ export default function GroupDetailScreen() {
 
   useEffect(() => {
     const fetchGroup = async () => {
+      console.log("UseEffect - index.jsx of group. and id : ", id);
+      
       await fetchGroupDetail(id);
     };
 

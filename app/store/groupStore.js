@@ -52,7 +52,7 @@ const useGroupStore = create((set) => ({
 
     
     fetchGroupDetail : async (id) => {
-        log.info("fetchGroupDetail called with data ", data);
+        console.log("fetchGroupDetail called with id ", id);
         try{
             const res = await axios.get(`https://famsecure.onrender.com/api/grp/${id}`);
             log.info("response from fetchGroupDetail ", res.data);

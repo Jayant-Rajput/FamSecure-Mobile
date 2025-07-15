@@ -36,7 +36,7 @@ const useAuthStore = create((set) => ({
             const res = await axios.post(`https://famsecure.onrender.com/api/auth/login`, data);
             console.log("Login Response: ", res.data);
             await saveToken(res.data.token);
-            set({ user: res.data });
+            set({ user: res.data.user });
             useSocketStore.getState().connectSocket(res.data.user.id);
 
         } catch(error){
